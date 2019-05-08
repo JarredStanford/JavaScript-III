@@ -173,7 +173,7 @@ GymnastWizard.prototype = Object.create(Humanoid.prototype);
 
 GymnastWizard.prototype.backflipAppleToss = function() {
   return {
-    sacrificialFruitHeal: function(target) {
+    sacrificialFruitHeal: function() {
       Object.defineProperty(badDude, "healthPoints", {value : badDude.healthPoints+10});
       Object.defineProperty(goodDude, "healthPoints", {value : goodDude.healthPoints+10});
       Object.defineProperty(mumbleBunny, "healthPoints", {value : mumbleBunny.healthPoints-20});
