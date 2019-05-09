@@ -54,6 +54,7 @@ function Humanoid(humanAttributes) {
   this.team = humanAttributes.team;
   this.weapons = humanAttributes.weapons;
   this.language = humanAttributes.language;
+  this.spellPower = humanAttributes.spellPower;
 }
 Humanoid.prototype = Object.create(CharacterStats.prototype);
 
@@ -141,12 +142,17 @@ function Warlock(evilAttributes) {
 
 Warlock.prototype = Object.create(Humanoid.prototype);
 
-Warlock.prototype.eldritchBlast = function() {
+Warlock.prototype.eldritchBlast = function(target) {
+  let spellTarget = target;
+  let caster = this.name
+  let damage = this.spellPower*10
   return {
     chaosDamage: function() {
-      Object.defineProperty(goodDude, "healthPoints", {value : goodDude.healthPoints-10});
-      return (`${badDude.name} summons a blast of pure chaos descending from the Eldritch Moon itself. ${goodDude.name} takes 10 chaos damage. ${goodDude.name} has ${goodDude.healthPoints} HP remaining.`)
-  }()
+      Object.defineProperty(spellTarget, "healthPoints", {value : spellTarget.healthPoints-damage});
+      if (spellTarget.healthPoints > 0){
+      return (`${caster} summons a blast of pure chaos descending from the Eldritch Moon itself. ${spellTarget.name} takes ${damage} chaos damage. ${spellTarget.name} has ${spellTarget.healthPoints} HP remaining.`)
+      } else return ((`${caster}'s chaotic ways have torn ${spellTarget.name} to pieces, ${spellTarget.name} has died`))
+    }()
 }
 }
 
@@ -156,11 +162,16 @@ function Shadowdancer(goodAttributes) {
 
 Shadowdancer.prototype = Object.create(Humanoid.prototype);
 
-Shadowdancer.prototype.psychicKnife = function() {
+Shadowdancer.prototype.psychicKnife = function(target) {
+  let spellTarget = target;
+  let caster = this.name
+  let damage = this.spellPower*10
   return {
     psychicDamage: function() {
-      Object.defineProperty(badDude, "healthPoints", {value : badDude.healthPoints-10});
-      return (`OMG ${goodDude.name} stabs ${badDude.name} with a flurry of stabs from his Psychic Knife! ${badDude.name} takes 10 psychic damage. ${badDude.name} has ${badDude.healthPoints} HP remaining.`)
+      Object.defineProperty(spellTarget, "healthPoints", {value : spellTarget.healthPoints-damage});
+      if (spellTarget.healthPoints > 0){
+      return (`OMG ${caster} stabs ${spellTarget.name} with a flurry of stabs from his Psychic Knife! ${spellTarget.name} takes ${damage} psychic damage. ${spellTarget.name} has ${spellTarget.healthPoints} HP remaining.`)
+      } else return (`${caster}'s Psychic power overwhelms ${spellTarget.name}, ${spellTarget.name} has died`)
   }()
 }
 }
@@ -171,13 +182,17 @@ function GymnastWizard(ambiguousAttributes) {
 
 GymnastWizard.prototype = Object.create(Humanoid.prototype);
 
-GymnastWizard.prototype.backflipAppleToss = function() {
+GymnastWizard.prototype.backflipAppleToss = function(target1, target2) {
+  let spellTarget1 = target1;
+  let spellTarget2 = target2;
+  let caster = this
+  let damage = this.spellPower*10
   return {
     sacrificialFruitHeal: function() {
-      Object.defineProperty(badDude, "healthPoints", {value : badDude.healthPoints+10});
-      Object.defineProperty(goodDude, "healthPoints", {value : goodDude.healthPoints+10});
-      Object.defineProperty(mumbleBunny, "healthPoints", {value : mumbleBunny.healthPoints-20});
-      return (`${mumbleBunny.name} appears athletically from the shadows and casts her signature spell Backflip Apple Toss. The sacrificial fruit heal successfully increases ${badDude.name}'s HP to ${badDude.healthPoints} and ${goodDude.name}'s HP to ${goodDude.healthPoints}, but lowers ${mumbleBunny.name}'s own HP to ${mumbleBunny.healthPoints}. No springs attached!`)
+      Object.defineProperty(spellTarget1, "healthPoints", {value : spellTarget1.healthPoints+damage});
+      Object.defineProperty(spellTarget2, "healthPoints", {value : spellTarget2.healthPoints+damage});
+      Object.defineProperty(caster, "healthPoints", {value : caster.healthPoints-(2*damage)});
+      return (`${caster.name} appears athletically from the shadows and casts her signature spell Backflip Apple Toss. The sacrificial fruit heal successfully increases ${spellTarget1.name}'s HP to ${spellTarget1.healthPoints} and ${spellTarget2.name}'s HP to ${spellTarget2.healthPoints}, but lowers ${caster.name}'s own HP to ${caster.healthPoints}. No springs attached!`)
   }()
 }
 }
@@ -197,6 +212,7 @@ const badDude = new Warlock({
     'Wand',
   ],
   language: 'Gnomish',
+  spellPower: 7
 });
 
 const goodDude = new Shadowdancer({
@@ -214,6 +230,7 @@ const goodDude = new Shadowdancer({
     'Breakdancing',
   ],
   language: 'Myconish?',
+  spellPower: 5
 });
 
 const mumbleBunny = new GymnastWizard({
@@ -231,12 +248,16 @@ const mumbleBunny = new GymnastWizard({
     'Somersaults',
   ],
   language: 'Pommel Horse',
+  spellPower: 2
 });
 console.log(goodDude);
 console.log(badDude);
 console.log(mumbleBunny);
-console.log(goodDude.psychicKnife());
-console.log(badDude.eldritchBlast());
-console.log(goodDude.psychicKnife());
-console.log(badDude.eldritchBlast());
-console.log(mumbleBunny.backflipAppleToss());
+console.log(goodDude.psychicKnife(badDude));
+console.log(badDude.eldritchBlast(goodDude));
+console.log(goodDude.psychicKnife(badDude));
+console.log(goodDude.psychicKnife(mumbleBunny));
+console.log(mumbleBunny.backflipAppleToss(badDude, goodDude));
+console.log(badDude.eldritchBlast(goodDude));
+
+//I spent way too much time on this...
